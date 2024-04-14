@@ -12,3 +12,12 @@ class MealSerializer(serializers.ModelSerializer):
         model = Meal
         fields = "__all__"
 
+class MealToClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MealToClient
+        fields = "__all__"
+
+class DailyMealSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DailyMeal
+        fields = "__all__"
