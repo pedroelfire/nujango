@@ -25,7 +25,7 @@ class Ingredients(models.Model):
     
 class DailyMeal(models.Model):
     name = models.CharField(max_length=255)
-    meals = models.ManyToManyField(Meal, null=True)
+    meals = models.ManyToManyField(Meal)
     
 class MealToClient(models.Model):
     meal = models.OneToOneField(DailyMeal, on_delete=models.DO_NOTHING)

@@ -12,7 +12,7 @@ from django.db.models.signals import post_save
 
 
 fs = Fatsecret("d7e8131ea6784224b25519d75aba04a6", "d2259ddb4d2f4fe9bb8c47c8ed1638b7")
-foods = fs.food_get_v2("35755")
+foods = fs.food_get_v2(food_id="35755")
 
 # Create your views here.
 
