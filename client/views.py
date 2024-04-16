@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
+from django.contrib.auth import authenticate, login, logout 
 from fatsecret import Fatsecret
 from django.dispatch import receiver
 from django.db.models.signals import post_save
@@ -26,8 +27,16 @@ class UserViewSet(ModelViewSet):
     serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
-        print("Elpepon")
-        return super().create(request, *args, **kwargs)
+        try:
+            username = request.data["username"]
+            print(username)
+            password = request.data["password"]
+            print(password)
+            user = authenticate(username=username, password=password)
+            print(user)
+            return super().create(request, *args, **kwargs)
+        except:
+            return HttpResponse("Usuario culero mal")
     
     def update(self, request, *args, **kwargs):
         print('Hola (update)')
