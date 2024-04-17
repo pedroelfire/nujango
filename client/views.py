@@ -25,22 +25,28 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    def create(self, request, *args, **kwargs):
+        print(request.data["username"])
+        try:
+            user = User.objects.create_user(username=request.data["username"], email=request.data["email"], password=request.data["password"])
+            return JsonResponse({'message': 'Creacion de usuario exitosa'})
+
+        except json.JSONDecodeError:
+            return JsonResponse({'message': 'Error al decodificar JSON'}, status=400)
+
 @csrf_exempt
 def Auth(request):
     if request.method == 'POST':
         try:
-            # Obtener los datos del cuerpo de la solicitud
             data = json.loads(request.body)
-            username = data.get('username')
-            password = data.get('password')
+            username = str(data.get('username'))
+            password = str(data.get('password'))
             print(username, password)
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, username=username, password=password)
             print(user)
             if user is not None:
-                # Autenticación exitosa
                 return JsonResponse({'message': 'Autenticación exitosa'})
             else:
-                # Autenticación fallida
                 return JsonResponse({'message': 'Autenticación fallida'}, status=401)
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Error al decodificar JSON'}, status=400)
