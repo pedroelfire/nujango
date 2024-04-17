@@ -56,8 +56,9 @@ CORS_ALLOWED_ORIGINS = [
    "http://localhost:4200",
 ]
 
-AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
-
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Habilita la autenticación por modelo de usuario
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

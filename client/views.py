@@ -1,16 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from rest_framework.viewsets import ModelViewSet
 from .serializers import *
 from .models import *
 from django.contrib.auth import authenticate, login, logout 
 from fatsecret import Fatsecret
-from rest_framework.authtoken.models import Token
-from django.dispatch import receiver
 from django.db.models.signals import post_save
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 fs = Fatsecret("d7e8131ea6784224b25519d75aba04a6", "d2259ddb4d2f4fe9bb8c47c8ed1638b7")
 
@@ -27,11 +24,25 @@ class NutritionistViewSet(ModelViewSet):
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    print("olaaaa")
-    authentication_classes = (TokenAuthentication)
-    print("elpepon")
-    permission_classes = (IsAuthenticated)
 
+@csrf_exempt
 def Auth(request):
-    user = authenticate(username=request.data['username'], password=request.data['password'])
-    print(user)
+    if request.method == 'POST':
+        try:
+            # Obtener los datos del cuerpo de la solicitud
+            data = json.loads(request.body)
+            username = data.get('username')
+            password = data.get('password')
+            print(username, password)
+            user = authenticate(username=username, password=password)
+            print(user)
+            if user is not None:
+                # Autenticación exitosa
+                return JsonResponse({'message': 'Autenticación exitosa'})
+            else:
+                # Autenticación fallida
+                return JsonResponse({'message': 'Autenticación fallida'}, status=401)
+        except json.JSONDecodeError:
+            return JsonResponse({'message': 'Error al decodificar JSON'}, status=400)
+    else:
+        return JsonResponse({'message': 'Método no permitido'}, status=405)
