@@ -1,12 +1,17 @@
+import os
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from fatsecret import Fatsecret
 from rest_framework.viewsets import ModelViewSet
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .serializers import *
 import json
 from .models import *
 from rest_framework.decorators import action
+from dotenv import load_dotenv, dotenv_values 
 
 
 
@@ -47,13 +52,6 @@ class MealViewSet(ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        nutritionist = request.created_by
-        queryset = Meal.objects.filter(created_by=nutritionist)
-        print(queryset)
-        serializer = MealSerializer(queryset, many=True)
-        return Response(serializer.data)
-
 class MealToClientViewSet(ModelViewSet):
     queryset = MealToClient.objects.all()
     serializer_class = MealToClientSerializer
@@ -69,4 +67,18 @@ def search_food(request):
         print(foods)
         return render(request, 'search_results.html', {'foods': foods})
     return render(request, 'search_food.html')
+
+
+@csrf_exempt
+@api_view(['POST'])
+def createIngredientsMeal(request):
+    print(request.data)
+    ingredients_list = request.data['ingredients']
+    client = Nutritionist.objects.get(id=request.data["created_by"])    
+    meal = Meal.objects.create(name=request.data['name'], meal_time=request.data["meal_time"], created_by=client)
+    for i in ingredients_list:
+        ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
+        meal.ingredients.add(ingredient)
+    return Response({'message': 'Meal created successfully'}, status=status.HTTP_201_CREATED)
+        
 

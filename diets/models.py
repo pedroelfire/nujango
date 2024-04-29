@@ -13,6 +13,7 @@ class Ingredients(models.Model):
     food_id = models.IntegerField(null=True)
     metric_serving_unit = models.CharField(choices=UNIT_CHOICES, max_length=4)
     metric_serving_amount = models.DecimalField(max_digits=10, decimal_places=3)
+    created_by = models.ForeignKey(Nutritionist, on_delete=models.DO_NOTHING)
 
     def __repr__(self):
         return (f"Nombre: {self.name}, Ingredientes: {self.ingredients}")

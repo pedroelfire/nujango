@@ -11,4 +11,5 @@ router.register(r'diets', DietViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path('search/', search_food, name='search_food'),
+    path('createIngredientsMeal/', createIngredientsMeal),
 ]
