@@ -6,9 +6,7 @@ from rest_framework.response import Response
 from .serializers import *
 import json
 from .models import *
-from django.contrib.auth.models import User
-from django.dispatch import receiver
-from django.db.models.signals import post_save
+from rest_framework.decorators import action
 
 
 
@@ -48,18 +46,21 @@ class IngredientsViewSet(ModelViewSet):
 class MealViewSet(ModelViewSet):
     queryset = Meal.objects.all()
     serializer_class = MealSerializer
-    @receiver(post_save, sender=Meal)
-    def my_handler(sender, **kwargs):
-        obj = kwargs['instance']
-        print('paso algo omaigad')
+
+    def retrieve(self, request, *args, **kwargs):
+        nutritionist = request.created_by
+        queryset = Meal.objects.filter(created_by=nutritionist)
+        print(queryset)
+        serializer = MealSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class MealToClientViewSet(ModelViewSet):
     queryset = MealToClient.objects.all()
     serializer_class = MealToClientSerializer
     
-class DailyMealViewSet(ModelViewSet):
-    queryset = DailyMeal.objects.all()
-    serializer_class = DailyMealSerializer
+class DietViewSet(ModelViewSet):
+    queryset = Diet.objects.all()
+    serializer_class = DietSerializer
     
 def search_food(request):
     if request.method == 'POST':

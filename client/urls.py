@@ -10,5 +10,6 @@ router.register(r'user', UserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("auth/", Auth)
+    path("auth/", Auth),
+    path("verify/:id/:accestoken", confirmVerificationEmail)
 ]

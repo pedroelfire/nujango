@@ -6,7 +6,7 @@ router =  routers.DefaultRouter()
 router.register(r'meals', MealViewSet)
 router.register(r'ingredients', IngredientsViewSet)
 router.register(r'mealtoclient', MealToClientViewSet)
-router.register(r'dailymeal', DailyMealViewSet)
+router.register(r'diets', DietViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),

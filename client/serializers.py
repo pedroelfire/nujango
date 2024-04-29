@@ -16,7 +16,7 @@ class NutritionistSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email', 'password', "is_active"]
         #extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     """def create(self, validated_data):
