@@ -60,25 +60,46 @@ class DietViewSet(ModelViewSet):
     queryset = Diet.objects.all()
     serializer_class = DietSerializer
     
-def search_food(request):
-    if request.method == 'POST':
-        query = request.POST.get('query')
-        foods = fs.foods_search(query)
-        print(foods)
-        return render(request, 'search_results.html', {'foods': foods})
-    return render(request, 'search_food.html')
+
+@csrf_exempt
+@api_view(['GET'])
+def getDietsByNutritionistId(request, nutritionist_id):
+    diets = Diet.objects.filter(created_by=nutritionist_id)
+    serializer = DietSerializer(diets, many=True)
+    return Response({'message': 'Search Diets Succesfull', 'data': serializer.data})
+
+@csrf_exempt
+@api_view(['POST'])    
+def searchListIngredients(request):
+    query = request.data['query_search']
+    ingredients = fs.foods_search(query)
+    return Response({'message': 'Search Succesfull', 'data': ingredients})
+
+@csrf_exempt
+@api_view(['GET'])    
+def searchIngredient(request, food_id):
+    ingredient = fs.food_get_v2(food_id)
+    return Response({'message': 'Search Successful', 'data': ingredient})
 
 
 @csrf_exempt
 @api_view(['POST'])
 def createIngredientsMeal(request):
-    print(request.data)
-    ingredients_list = request.data['ingredients']
-    client = Nutritionist.objects.get(id=request.data["created_by"])    
-    meal = Meal.objects.create(name=request.data['name'], meal_time=request.data["meal_time"], created_by=client)
-    for i in ingredients_list:
-        ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
-        meal.ingredients.add(ingredient)
-    return Response({'message': 'Meal created successfully'}, status=status.HTTP_201_CREATED)
+    try:
+        print(request.data)
+        ingredients_list = request.data['ingredients']
+        client = Nutritionist.objects.get(id=request.data["created_by"])    
+        meal = Meal.objects.create(name=request.data['name'], meal_time=request.data["meal_time"], created_by=client)
+        for i in ingredients_list:
+            fs.food_get_v2(i['food_id'])
+            ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
+            meal.ingredients.add(ingredient)
+        return Response({'message': 'Meal created successfully'}, status=status.HTTP_201_CREATED)
+    except: return Response({'message': 'One of the ingredients does not exist'})
+
+
+
+
+    
         
 

@@ -10,6 +10,8 @@ router.register(r'diets', DietViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path('search/', search_food, name='search_food'),
     path('createIngredientsMeal/', createIngredientsMeal),
-]
+    path('searchListIngredients/', searchListIngredients),
+    path('searchIngredient/<int:food_id>/', searchIngredient),
+    path('getDietsByNutritionistId/<int:nutritionist_id>/', getDietsByNutritionistId),
+    ]
