@@ -12,6 +12,12 @@ UNIT_CHOICES = [
     ('tbsp', 'tablespoons'),
 ]
 
+TYPE_CHOICES = [
+    ('D', 'desayuno'),
+    ('A', 'almuerzo'),
+    ('C', 'cena'),
+]
+
 class Ingredients(models.Model):
     food_id = models.IntegerField(null=True)
     data = models.JSONField(null= False, default=0)
@@ -43,5 +49,11 @@ class Diet(models.Model):
 class MealToClient(models.Model):
     diet = models.OneToOneField(Diet, on_delete=models.DO_NOTHING)
     client = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
+
+class Diary(models.Model):
+    ingredients = models.ManyToManyField(Ingredients, blank=True, on_delete=models.DO_NOTHING)
+    date = models.DateField()
+    type = models.CharField(choices=TYPE_CHOICES, max_length=4)
+    client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
     
 

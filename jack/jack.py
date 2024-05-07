@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 import openai
 import json
+from  .models import *
 
 load_dotenv()
 
@@ -30,10 +31,11 @@ def transcribirAudio():
     response_format="text")
     return transcription
 
-def llamarFuncion(transcription):
-    print(transcription)
+def llamarFuncion(conversation_id, ):
+    transcription = transcribirAudio()
+    
     messages = []
-    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta"})
+    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, debes de cumplir tu rol de asistente virtual, tu nombre es jack y tu especialidad es el fittnes y la nutricion"})
     messages.append({"role": "user", "content": transcription})
     chat_response = chat_completion_request(messages, tools=tools)
     try:
@@ -98,6 +100,22 @@ tools = [
                 "required": ["ciudad"],
             },
         }
-    }]
+    }, {
+        "type": "function",
+        "function": {
+            "name": "preguntar_jack",
+            "description": "Da el clima de una ciudad",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "ciudad": {
+                        "type": "string",
+                        "description": "En la ciudad de hidalgo del parra, o cualquier ciudad del munedo",
+                    }
+                },
+                "required": ["ciudad"],
+            },
+        }
+    } ]
 
 llamarFuncion("Dame el clima en ")
