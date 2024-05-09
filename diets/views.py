@@ -74,11 +74,18 @@ def searchListIngredients(request):
     ingredients = fs.foods_search(query)
     return Response({'message': 'Search Succesfull', 'data': ingredients})
 
-@csrf_exempt
 @api_view(['GET'])    
 def searchIngredient(request, food_id):
     ingredient = fs.food_get_v2(food_id)
     return Response({'message': 'Search Successful', 'data': ingredient})
+
+@csrf_exempt
+@api_view(['POST'])    
+def addIngredientDiary(request):
+    i = request
+    client= Client.objects.get(id=request.data["created_by"])
+    ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
+    return Response({'message': 'Search Succesfull', 'data': ingredient})
 
 
 @csrf_exempt
