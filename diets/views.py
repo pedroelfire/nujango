@@ -11,7 +11,6 @@ from .serializers import *
 import json
 from .models import *
 from rest_framework.decorators import action
-from dotenv import load_dotenv, dotenv_values 
 
 
 

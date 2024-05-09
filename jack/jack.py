@@ -9,19 +9,6 @@ api_key = os.getenv("API_KEY")
 client = openai.OpenAI(api_key=api_key)
 modelo= "gpt-4-turbo"
 
-
-def hacer_pregunta(pregunta):
-    response = openai.ChatCompletion.create(
-        model=modelo,
-        messages=[
-            {"role": "system", "content": "You are a fitness application user."},
-            {"role": "user", "content": pregunta},
-        ],
-        api_key=api_key
-    )
-
-    return response.choices[0].message["content"]
-
 def transcribirAudio():
     audio_file = open("./speech.mp3", "rb")
     transcription = client.audio.transcriptions.create(
@@ -33,7 +20,7 @@ def transcribirAudio():
 def llamarFuncion(transcription):
     print(transcription)
     messages = []
-    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta"})
+    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios"})
     messages.append({"role": "user", "content": transcription})
     chat_response = chat_completion_request(messages, tools=tools)
     try:
@@ -92,7 +79,7 @@ tools = [
                 "properties": {
                     "ciudad": {
                         "type": "string",
-                        "description": "En la ciudad de hidalgo del parra, o cualquier ciudad del munedo",
+                        "description": "En la ciudad de hidalgo del parral, o cualquier ciudad del mundo",
                     }
                 },
                 "required": ["ciudad"],
@@ -100,4 +87,5 @@ tools = [
         }
     }]
 
-llamarFuncion("Dame el clima en ")
+llamarFuncion("Dime una comida de 100 calorias")
+

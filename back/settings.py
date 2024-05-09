@@ -26,8 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "diets",
     'rest_framework',
+    "diets",
     'rest_framework.authtoken',
     'client',
     'corsheaders',
@@ -49,8 +49,6 @@ DEFAULT_FROM_EMAIL = 'noreply<no_reply@domain.com>'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
 }
 
