@@ -18,29 +18,29 @@ def transcribirAudio():
     response_format="text")
     return transcription
 
-def llamarFuncion(conversation_id, ):
-    transcription = transcribirAudio()
+def llamarFuncion(question, previous_messages):
+    #transcription = transcribirAudio()
     
     messages = []
-    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios"})
-    messages.append({"role": "user", "content": transcription})
+    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios, ahora te voy a proporcionar los datos de los habitos alimenticios en formato JSON, tu trabajo es leerlos y tomar esa informacion en cuenta para tu respuesta, aunque puede que no sea totalmente necesaria, aqui la informacion:  "})
+    messages.append({"role": "system", "content": f"Estos son los ultimos mensajes de la conversacion con el cliente: {previous_messages}"})
+    messages.append({"role": "user", "content": question}) 
     chat_response = chat_completion_request(messages, tools=tools)
     try:
         assistant_message = chat_response.choices[0].message.tool_calls[0].function
     except:
-        print(chat_response.choices[0].message.content)
-        return
+        return chat_response.choices[0].message.content
+        
     function_name = assistant_message.name
     params = json.loads(assistant_message.arguments)
     messages.append(assistant_message)
-    print(assistant_message)
     
     if function_name == "imprimir_huevo":
-        imprimir_huevo()
+        return imprimir_huevo()
     elif function_name == "dar_clima":
-        dar_clima(params["ciudad"])
+        return dar_clima(params["ciudad"])
     else:
-        print("No se reconoció la función solicitada.")
+        return(assistant_message)
 
 
 def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo):
@@ -58,10 +58,10 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo
         return e
     
 def imprimir_huevo():
-    print("Imprimi un huevito con jamon")
+    return "Imprimi un huevito con jamon"
 
 def dar_clima(ciudad):
-    print(f"El clima en {ciudad} es de 100000 grados selsois")
+    return f"El clima en {ciudad} es de 100000 grados selsois"
 
 
 tools = [
@@ -87,23 +87,6 @@ tools = [
                 "required": ["ciudad"],
             },
         }
-    }, {
-        "type": "function",
-        "function": {
-            "name": "preguntar_jack",
-            "description": "Da el clima de una ciudad",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "ciudad": {
-                        "type": "string",
-                        "description": "En la ciudad de hidalgo del parra, o cualquier ciudad del munedo",
-                    }
-                },
-                "required": ["ciudad"],
-            },
-        }
-    } ]
+    }]
 
-llamarFuncion("Dime una comida de 100 calorias")
 

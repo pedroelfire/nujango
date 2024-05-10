@@ -51,7 +51,7 @@ class MealToClient(models.Model):
     client = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
 
 class Diary(models.Model):
-    ingredients = models.ManyToManyField(Ingredients, blank=True, on_delete=models.DO_NOTHING)
+    ingredients = models.ManyToManyField(Ingredients, blank=True)
     date = models.DateField()
     type = models.CharField(choices=TYPE_CHOICES, max_length=4)
     client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)

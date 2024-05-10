@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "diets",
     'rest_framework.authtoken',
     'client',
+    'jack',
     'corsheaders',
     "verify_email.apps.VerifyEmailConfig",
     'rest_framework_simplejwt',

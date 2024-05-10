@@ -9,4 +9,4 @@ class JackConversationSerializer(serializers.ModelSerializer):
 class JackQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = JackQuestion
-        fields = "__all__"
+        fields = ['id', 'question', 'conversation', 'response']
