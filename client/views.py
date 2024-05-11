@@ -1,9 +1,11 @@
 from rest_framework.response import Response
 from django.http import HttpResponse, JsonResponse
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import *
 from .models import *
-from django.contrib.auth import authenticate, login, logout 
+from django.contrib.auth import authenticate
 from fatsecret import Fatsecret
 from django.db.models.signals import post_save
 from django.views.decorators.csrf import csrf_exempt
@@ -30,34 +32,40 @@ class UserViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         try:
             user = User.objects.create_user(username=request.data["username"], email=request.data["email"], password=request.data["password"], is_active = False )
-            refresh = RefreshToken.for_user(user)
-            sendVerificationEmail(user, refresh)
             return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                "id": user.id,
+                "username": user.username,
+                "password": user.password,
                 'message': 'Usuario creado exitosamente'
             })
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Error al decodificar JSON'}, status=400)
-
-@csrf_exempt
-def Auth(request):
-    if request.method == 'POST':
+        
+class RestrictedView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format=None):
+        return JsonResponse({"response": "You are allowed here"})
+    
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
         try:
             data = json.loads(request.body)
             username = str(data.get('username'))
             password = str(data.get('password'))
             print(username, password)
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(username=username, password=password)
+            print("Hola pendejin")
             print(user)
+            print("Hola pendejin")
+
             if user is not None:
-                return JsonResponse({'message': 'Autenticación exitosa'})
+                refresh = RefreshToken.for_user(user)
+                return JsonResponse({'refresh': str(refresh), 'access': str(refresh.acces_token)})
             else:
-                return JsonResponse({'message': 'Autenticación fallida'}, status=401)
+                return JsonResponse({'message': 'Autenticacion fallida'}, status=401)
         except json.JSONDecodeError:
             return JsonResponse({'message': 'Error al decodificar JSON'}, status=400)
-    else:
-        return JsonResponse({'message': 'Método no permitido'}, status=405)
     
 def sendVerificationEmail(user, refresh):
     send_mail(

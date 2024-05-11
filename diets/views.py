@@ -98,10 +98,10 @@ def createIngredientsMeal(request):
         meal = Meal.objects.create(name=request.data['name'], meal_time=request.data["meal_time"], created_by=client)
         for i in ingredients_list:
             fs.food_get_v2(i['food_id'])
-            ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
+            ingredient = Ingredients.objects.create(food_id=i['food_id'], data=i['data'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
             meal.ingredients.add(ingredient)
         return Response({'message': 'Meal created successfully'}, status=status.HTTP_201_CREATED)
-    except: return Response({'message': 'One of the ingredients does not exist'})
+    except Exception as e: return Response({'message': 'One of the ingredients does not exist', 'error': e})
 
 
 

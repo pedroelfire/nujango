@@ -10,6 +10,7 @@ router.register(r'user', UserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("auth/", Auth),
+    path("auth/", LoginView.as_view()),
+    path("restricted/", RestrictedView.as_view()),
     path("verify/:id/:accestoken", confirmVerificationEmail)
 ]

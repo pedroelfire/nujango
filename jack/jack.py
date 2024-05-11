@@ -6,6 +6,17 @@ from  .models import *
 
 load_dotenv()
 
+functions_responses = [{
+    'role': 'function',
+    'name': 'imprimir_huevo',
+    'content': 'Imprimiste un huevo de manera satisfactoria'
+}, {
+    'role': 'function',
+    'name': 'dar_clima',
+    'content': 'Diste el clima de manera exitosa'
+}]
+
+
 api_key = os.getenv("API_KEY")
 client = openai.OpenAI(api_key=api_key)
 modelo= "gpt-4-turbo"
@@ -18,6 +29,8 @@ def transcribirAudio():
     response_format="text")
     return transcription
 
+
+
 def llamarFuncion(question, previous_messages):
     #transcription = transcribirAudio()
     
@@ -25,7 +38,10 @@ def llamarFuncion(question, previous_messages):
     messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios, ahora te voy a proporcionar los datos de los habitos alimenticios en formato JSON, tu trabajo es leerlos y tomar esa informacion en cuenta para tu respuesta, aunque puede que no sea totalmente necesaria, aqui la informacion:  "})
     messages.append({"role": "system", "content": f"Estos son los ultimos mensajes de la conversacion con el cliente: {previous_messages}"})
     messages.append({"role": "user", "content": question}) 
+    for responses in functions_responses:
+        messages.append(responses)
     chat_response = chat_completion_request(messages, tools=tools)
+    print(chat_response)
     try:
         assistant_message = chat_response.choices[0].message.tool_calls[0].function
     except:
@@ -41,6 +57,9 @@ def llamarFuncion(question, previous_messages):
         return dar_clima(params["ciudad"])
     else:
         return(assistant_message)
+    
+
+
 
 
 def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo):
@@ -56,8 +75,13 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo
         print("Unable to generate ChatCompletion response")
         print(f"Exception: {e}")
         return e
-    
+
+def intercambiar_ingrediente(ingredient):
+    return "Imprimi un huevito con jamon"
+
 def imprimir_huevo():
+    for a in range(10):
+        print(a)
     return "Imprimi un huevito con jamon"
 
 def dar_clima(ciudad):
@@ -85,6 +109,22 @@ tools = [
                     }
                 },
                 "required": ["ciudad"],
+            },
+        }
+    },     {
+        "type": "function",
+        "function": {
+            "name": "intercambiar_ingrediente",
+            "description": "Toma un ingrediente, luego, genera un ingrediente diferente pero con valores nutrimentales parecidos",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "ingrediente": {
+                        "type": "string",
+                        "description": "Puede ser algo como arroz, aguacate, manzana, cualquier ingrediente, no platillo",
+                    }
+                },
+                "required": ["ingrediente"],
             },
         }
     }]
