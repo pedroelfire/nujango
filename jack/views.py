@@ -14,9 +14,10 @@ class JackQuestionViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         conversation_value = request.data.get('conversation')
         conversations = JackQuestion.objects.filter(conversation=conversation_value).all()
-        if len(conversations) > 50: conversations = conversations.reverse()[:30]
+        previous_messages = []
+        if len(conversations) > 50: 
+            conversations = conversations.reverse()[:30]
         if conversations:
-            previous_messages = []
             for conversation in conversations:
                 previous_message =({
                 'question': conversation.question,
@@ -26,13 +27,10 @@ class JackQuestionViewSet(ModelViewSet):
         
         mutable_data = request.data.copy()
         mutable_data['response'] = llamarFuncion(question=request.data.get('question'), previous_messages=previous_messages)
-        print(mutable_data['response'], "aaaaaaaaaaaa")
         serializer = self.get_serializer(data=mutable_data)
-        print(serializer)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-    
-        return Response(serializer.data)
+        return Response(serializer.data, status=200)
     
     def update(self, request, *args, **kwargs):
         print('Hola (update)')
