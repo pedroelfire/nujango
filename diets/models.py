@@ -40,7 +40,6 @@ class Meal(models.Model):
     ingredients = models.ManyToManyField(Ingredients, default=0, blank=True)
     created_by = models.ForeignKey(Nutritionist, on_delete=models.DO_NOTHING)
  
-    
 class Diet(models.Model):
     name = models.CharField(max_length=255)
     created_by = models.ForeignKey(Nutritionist, on_delete=models.DO_NOTHING)

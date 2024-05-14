@@ -1,6 +1,6 @@
 import os
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from fatsecret import Fatsecret
 from rest_framework.viewsets import ModelViewSet
 from django.views.decorators.csrf import csrf_exempt
@@ -8,7 +8,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import *
-import json
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import *
 from rest_framework.decorators import action
 
@@ -19,14 +20,9 @@ foods = fs.food_get_v2(food_id="35755")
 
 # Create your views here.
 
-
-def hola(request):
-    return HttpResponse(json.dumps(foods))
-
 class IngredientsViewSet(ModelViewSet):
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
-
 
     def create(self, request, *args, **kwargs):
         food_id = request.data['food_id']
@@ -58,26 +54,35 @@ class MealToClientViewSet(ModelViewSet):
 class DietViewSet(ModelViewSet):
     queryset = Diet.objects.all()
     serializer_class = DietSerializer
+
+class DietsNutritionist(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, nutritionist_id, format=None):
+        diets = Diet.objects.filter(created_by=nutritionist_id)
+        serializer = DietSerializer(diets, many=True)
+        return Response({'message': 'Search Diets Succesfull', 'data': serializer.data})
     
+    def post(self, request):
+        return Response({'message': 'Search Diets Succesfull'})
 
-@csrf_exempt
-@api_view(['GET'])
-def getDietsByNutritionistId(request, nutritionist_id):
-    diets = Diet.objects.filter(created_by=nutritionist_id)
-    serializer = DietSerializer(diets, many=True)
-    return Response({'message': 'Search Diets Succesfull', 'data': serializer.data})
+class FSFunctions(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        query = request.data['query_search']
+        try:
+            ingredients = fs.foods_search(query)
+            return JsonResponse({'message': 'Search Succesfull', 'data': ingredients})
+        except Exception as e:
+            return JsonResponse({'message': "An error ocurred", "data":e}, status=400)
+        
+    def get(self, request, food_id):
+        try:
+            ingredient = fs.food_get_v2(food_id)
+            return JsonResponse({'message': 'Search Succesfull', 'data': ingredient})
+        except Exception as e:
+            return JsonResponse({'message': "An error ocurred", "data": str(e)}, status=400)
 
-@csrf_exempt
-@api_view(['POST'])    
-def searchListIngredients(request):
-    query = request.data['query_search']
-    ingredients = fs.foods_search(query)
-    return Response({'message': 'Search Succesfull', 'data': ingredients})
-
-@api_view(['GET'])    
-def searchIngredient(request, food_id):
-    ingredient = fs.food_get_v2(food_id)
-    return Response({'message': 'Search Successful', 'data': ingredient})
 
 @csrf_exempt
 @api_view(['POST'])    
@@ -85,7 +90,7 @@ def addIngredientDiary(request):
     i = request
     client= Client.objects.get(id=request.data["created_by"])
     ingredient = Ingredients.objects.create(food_id=i['food_id'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
-    return Response({'message': 'Search Succesfull', 'data': ingredient})
+    return Response({'message': 'Ingredient added succesfully', 'data': ingredient})
 
 
 @csrf_exempt

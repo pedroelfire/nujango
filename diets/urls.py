@@ -11,7 +11,8 @@ router.register(r'diets', DietViewSet)
 urlpatterns = [
     path("", include(router.urls)),
     path('createIngredientsMeal/', createIngredientsMeal),
-    path('searchListIngredients/', searchListIngredients),
-    path('searchIngredient/<int:food_id>/', searchIngredient),
-    path('getDietsByNutritionistId/<int:nutritionist_id>/', getDietsByNutritionistId),
+    path('searchIngredients/', FSFunctions.as_view()),
+    path('searchIngredients/<int:food_id>/', FSFunctions.as_view()),
+    path('dietsNutritionist/', DietsNutritionist.as_view()),
+    path('dietsNutritionist/<int:nutritionist_id>/', DietsNutritionist.as_view()),
     ]

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from .serializers import *
 from .models import *
 from django.contrib.auth import authenticate
+from rest_framework.authentication import SessionAuthentication
 from fatsecret import Fatsecret
 from django.db.models.signals import post_save
 from django.views.decorators.csrf import csrf_exempt
@@ -31,7 +32,7 @@ class UserViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         try:
-            user = User.objects.create_user(username=request.data["username"], email=request.data["email"], password=request.data["password"], is_active = False )
+            user = User.objects.create_user(username=request.data["username"], email=request.data["email"], password=request.data["password"], is_active = True )
             return Response({
                 "id": user.id,
                 "username": user.username,
@@ -47,7 +48,7 @@ class RestrictedView(APIView):
         return JsonResponse({"response": "You are allowed here"})
     
 class LoginView(APIView):
-    permission_classes = [AllowAny]
+    authentication_classes = [SessionAuthentication]  # Permitir autenticación sin JWT
     def post(self, request):
         try:
             data = json.loads(request.body)
@@ -61,7 +62,7 @@ class LoginView(APIView):
 
             if user is not None:
                 refresh = RefreshToken.for_user(user)
-                return JsonResponse({'refresh': str(refresh), 'access': str(refresh.acces_token)})
+                return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)})
             else:
                 return JsonResponse({'message': 'Autenticacion fallida'}, status=401)
         except json.JSONDecodeError:
