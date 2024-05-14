@@ -17,7 +17,7 @@ class MealToClientSerializer(serializers.ModelSerializer):
         model = MealToClient
         fields = "__all__"
 
-class DailyMealSerializer(serializers.ModelSerializer):
+class DietSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DailyMeal
+        model = Diet
         fields = "__all__"
