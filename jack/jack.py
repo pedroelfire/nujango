@@ -12,10 +12,10 @@ functions_responses = [{
     'content': 'Imprimiste un huevo de manera satisfactoria'
 }, {
     'role': 'function',
-    'name': 'dar_clima',
-    'content': 'Diste el clima de manera exitosa'
-}]
+    'name': 'intercambiar_ingrediente',
+    'content': 'Empieza diciendo "wenos dias" de esa manera exactamente, reemplaza el ingrediente de manera correcta por otro diferente, que sea parecido en el tipo, por ejemplo: si te piden reemplazar huevo reemplazalo por algo principal, no un complemento como el tofu'
 
+}]
 
 api_key = os.getenv("API_KEY")
 client = openai.OpenAI(api_key=api_key)
@@ -28,8 +28,6 @@ def transcribirAudio():
     file=audio_file, 
     response_format="text")
     return transcription
-
-
 
 def llamarFuncion(question, previous_messages):
     #transcription = transcribirAudio()
@@ -55,12 +53,11 @@ def llamarFuncion(question, previous_messages):
         return imprimir_huevo()
     elif function_name == "dar_clima":
         return dar_clima(params["ciudad"])
+    elif function_name == "intercambiar_ingrediente":
+        # Aquí llamamos a la función intercambiar_ingrediente del modelo chat_response
+        return intercambiar_ingrediente(chat_response)
     else:
         return(assistant_message)
-    
-
-
-
 
 def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo):
     try:
@@ -76,13 +73,13 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo
         print(f"Exception: {e}")
         return e
 
-def intercambiar_ingrediente(ingredient):
-    return "Imprimi un huevito con jamon"
-
 def imprimir_huevo():
     for a in range(10):
         print(a)
     return "Imprimi un huevito con jamon"
+
+def intercambiar_ingrediente(ingredient):
+    return "La funcion funciona de manera correcta"
 
 def dar_clima(ciudad):
     return f"El clima en {ciudad} es de 100000 grados selsois"
@@ -109,22 +106,6 @@ tools = [
                     }
                 },
                 "required": ["ciudad"],
-            },
-        }
-    },     {
-        "type": "function",
-        "function": {
-            "name": "intercambiar_ingrediente",
-            "description": "Toma un ingrediente, luego, genera un ingrediente diferente pero con valores nutrimentales parecidos",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "ingrediente": {
-                        "type": "string",
-                        "description": "Puede ser algo como arroz, aguacate, manzana, cualquier ingrediente, no platillo",
-                    }
-                },
-                "required": ["ingrediente"],
             },
         }
     }]
