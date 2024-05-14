@@ -67,7 +67,6 @@ class DietsNutritionist(APIView):
         return Response({'message': 'Search Diets Succesfull'})
 
 class FSFunctions(APIView):
-    permission_classes = [IsAuthenticated]
     def post(self, request):
         query = request.data['query_search']
         try:

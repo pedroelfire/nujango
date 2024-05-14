@@ -9,4 +9,5 @@ router.register(r'questions', JackQuestionViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("conversationMessages/<int:conversation_id>/", ConversationMessages.as_view())
     ]

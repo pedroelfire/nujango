@@ -1,9 +1,13 @@
 from django.shortcuts import render
 from .serializer import *
 from rest_framework.viewsets import ModelViewSet
+from django.views.decorators.csrf import csrf_exempt
 from diets.models import *
 from .jack import *
+from django.http import HttpResponse, JsonResponse
 from rest_framework.response import Response
+from rest_framework.decorators import APIView
+
 
 
 # Create your views here.
@@ -66,3 +70,18 @@ class JackConversationViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         print('ola(retrieve)')
         return super().retrieve(request, *args, **kwargs)
+    
+class ConversationMessages(APIView):
+    def get(self, request, conversation_id):
+        try:
+            print("ola")
+            messages = JackQuestion.objects.filter(conversation_id = conversation_id)
+            serializer = JackQuestionSerializer(messages, many=True)
+            print({"message": "Conversaciones conseguidas de manera correcta", "data": serializer.data})
+            return JsonResponse({"message": "Conversaciones conseguidas de manera correcta", "data": serializer.data})
+        except Exception as e:
+             print(e)
+             return JsonResponse({"message": "Error", "data": e})
+
+    def post(self, request):
+        return Response({'message': 'Search Diets Succesfull'})

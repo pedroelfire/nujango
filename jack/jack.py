@@ -28,6 +28,7 @@ def transcribirAudio():
     file=audio_file, 
     response_format="text")
     return transcription
+    
 
 def llamarFuncion(question, previous_messages):
     #transcription = transcribirAudio()
