@@ -104,7 +104,9 @@ def createIngredientsMeal(request):
             fs.food_get_v2(i['food_id'])
             ingredient = Ingredients.objects.create(food_id=i['food_id'], data=i['data'], metric_serving_unit=i['metric_serving_unit'], metric_serving_amount=i['metric_serving_amount'], created_by=client)
             meal.ingredients.add(ingredient)
-        return Response({'message': 'Meal created successfully'}, status=status.HTTP_201_CREATED)
+        
+        serializer = MealSerializer(meal)    
+        return Response({'message': 'Meal created successfully', "data":serializer.data}, status=status.HTTP_201_CREATED)
     except Exception as e: return Response({'message': 'One of the ingredients does not exist', 'error': e})
 
 

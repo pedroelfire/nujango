@@ -30,11 +30,11 @@ def transcribirAudio():
     return transcription
     
 
-def llamarFuncion(question, previous_messages):
+def llamarFuncion(question, previous_messages, previous_foods):
     #transcription = transcribirAudio()
     
     messages = []
-    messages.append({"role": "system", "content": "Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios, ahora te voy a proporcionar los datos de los habitos alimenticios en formato JSON, tu trabajo es leerlos y tomar esa informacion en cuenta para tu respuesta, aunque puede que no sea totalmente necesaria, aqui la informacion:  "})
+    messages.append({"role": "system", "content": f"Escucha el usuario y elige la funcion correcta, eres un asistente virtual llamado jack, resuelves preguntas de fittnes, ya sea acerca de comidas o de ejercicios, ahora te voy a proporcionar los datos de los habitos alimenticios en formato JSON, tu trabajo es leerlos y tomar esa informacion en cuenta para tu respuesta, aunque puede que no sea totalmente necesaria, aqui la informacion, estas son las ultimas comidas que a registrado: {previous_foods} "})
     messages.append({"role": "system", "content": f"Estos son los ultimos mensajes de la conversacion con el cliente: {previous_messages}"})
     messages.append({"role": "user", "content": question}) 
     for responses in functions_responses:

@@ -32,7 +32,7 @@ class Ingredients(models.Model):
 
 
     def __repr__(self):
-        return (f"Nombre: {self.name}, Ingredientes: {self.ingredients}")
+        return (f"Data: {self.data}, metric_serving_unit: {self.metric_serving_unit}, metric_serving_amount: {self.metric_serving_amount} ")
 
 class Meal(models.Model):
     name = models.CharField(max_length=255)

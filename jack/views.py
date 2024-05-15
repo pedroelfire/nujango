@@ -18,6 +18,8 @@ class JackQuestionViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         conversation_value = request.data.get('conversation')
         conversations = JackQuestion.objects.filter(conversation=conversation_value).all()
+        created_by = conversations[0].conversation.made_by.user.id
+        print(created_by)
         previous_messages = []
         if len(conversations) > 50: 
             conversations = conversations.reverse()[:30]
@@ -30,7 +32,9 @@ class JackQuestionViewSet(ModelViewSet):
                 previous_messages.append(previous_message)
         
         mutable_data = request.data.copy()
-        mutable_data['response'] = llamarFuncion(question=request.data.get('question'), previous_messages=previous_messages)
+        ingredients = Ingredients.objects.filter(created_by=created_by)
+        print(ingredients)
+        mutable_data['response'] = llamarFuncion(question=request.data.get('question'), previous_messages=previous_messages, previous_foods=ingredients)
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -74,7 +78,6 @@ class JackConversationViewSet(ModelViewSet):
 class ConversationMessages(APIView):
     def get(self, request, conversation_id):
         try:
-            print("ola")
             messages = JackQuestion.objects.filter(conversation_id = conversation_id)
             serializer = JackQuestionSerializer(messages, many=True)
             print({"message": "Conversaciones conseguidas de manera correcta", "data": serializer.data})
@@ -82,6 +85,3 @@ class ConversationMessages(APIView):
         except Exception as e:
              print(e)
              return JsonResponse({"message": "Error", "data": e})
-
-    def post(self, request):
-        return Response({'message': 'Search Diets Succesfull'})
