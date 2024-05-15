@@ -13,13 +13,13 @@ functions_responses = [{
 }, {
     'role': 'function',
     'name': 'intercambiar_ingrediente',
-    'content': 'Empieza diciendo "wenos dias" de esa manera exactamente, reemplaza el ingrediente de manera correcta por otro diferente, que sea parecido en el tipo, por ejemplo: si te piden reemplazar huevo reemplazalo por algo principal, no un complemento como el tofu'
+    'content': 'Empieza diciendo "Buenos dias" de esa manera exactamente, reemplaza el ingrediente de manera correcta por otro diferente, que sea parecido en el tipo, por ejemplo: si te piden reemplazar huevo reemplazalo por algo principal, no un complemento como el tofu'
 
 }]
 
 api_key = os.getenv("API_KEY")
 client = openai.OpenAI(api_key=api_key)
-modelo= "gpt-4-turbo"
+modelo= "gpt-4o"
 
 def transcribirAudio():
     audio_file = open("./speech.mp3", "rb")
