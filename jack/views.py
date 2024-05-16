@@ -17,8 +17,10 @@ class JackQuestionViewSet(ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         conversation_value = request.data.get('conversation')
+        print(conversation_value)
         conversations = JackQuestion.objects.filter(conversation=conversation_value).all()
-        created_by = conversations[0].conversation.made_by.user.id
+        created_by = JackConversation.objects.filter(id=conversation_value)
+        created_by = created_by[0].made_by.user.id
         print(created_by)
         previous_messages = []
         if len(conversations) > 50: 
@@ -33,7 +35,6 @@ class JackQuestionViewSet(ModelViewSet):
         
         mutable_data = request.data.copy()
         ingredients = Ingredients.objects.filter(created_by=created_by)
-        print(ingredients)
         mutable_data['response'] = llamarFuncion(question=request.data.get('question'), previous_messages=previous_messages, previous_foods=ingredients)
         serializer = self.get_serializer(data=mutable_data)
         serializer.is_valid(raise_exception=True)
