@@ -17,11 +17,11 @@ class JackQuestionViewSet(ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         conversation_value = request.data.get('conversation')
-        print(conversation_value)
+        
         conversations = JackQuestion.objects.filter(conversation=conversation_value).all()
         created_by = JackConversation.objects.filter(id=conversation_value)
         created_by = created_by[0].made_by.user.id
-        print(created_by)
+        
         previous_messages = []
         if len(conversations) > 50: 
             conversations = conversations.reverse()[:30]
@@ -41,18 +41,14 @@ class JackQuestionViewSet(ModelViewSet):
         self.perform_create(serializer)
         return Response(serializer.data, status=200)
     
-    def update(self, request, *args, **kwargs):
-        print('Hola (update)')
-        print(request.data)
+    def update(self, request, *args, **kwargs):            
         return super().update(request, *args, **kwargs)
     
     def list(self, request, *args, **kwargs):
-        print('chupame los huevos(list)')
-        print(request.data)
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        print('ola(retrieve)')
+        
         return super().retrieve(request, *args, **kwargs)
     
 class JackConversationViewSet(ModelViewSet):
@@ -62,27 +58,20 @@ class JackConversationViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
     
-    def update(self, request, *args, **kwargs):
-        print('Hola (update)')
-        print(request.data)
+    def update(self, request, *args, **kwargs):                
         return super().update(request, *args, **kwargs)
     
-    def list(self, request, *args, **kwargs):
-        print('chupame los huevos(list)')
-        print(request.data)
+    def list(self, request, *args, **kwargs):                
         return super().list(request, *args, **kwargs)
 
-    def retrieve(self, request, *args, **kwargs):
-        print('ola(retrieve)')
+    def retrieve(self, request, *args, **kwargs):        
         return super().retrieve(request, *args, **kwargs)
     
 class ConversationMessages(APIView):
     def get(self, request, conversation_id):
         try:
             messages = JackQuestion.objects.filter(conversation_id = conversation_id)
-            serializer = JackQuestionSerializer(messages, many=True)
-            print({"message": "Conversaciones conseguidas de manera correcta", "data": serializer.data})
+            serializer = JackQuestionSerializer(messages, many=True)            
             return JsonResponse({"message": "Conversaciones conseguidas de manera correcta", "data": serializer.data})
-        except Exception as e:
-             print(e)
+        except Exception as e:             
              return JsonResponse({"message": "Error", "data": e})

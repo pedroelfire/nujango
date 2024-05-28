@@ -30,17 +30,15 @@ class IngredientsViewSet(ModelViewSet):
         return super().create(request, *args, **kwargs)
     
     def update(self, request, *args, **kwargs):
-        print('Hola (update)')
-        print(request.data)
+
         return super().update(request, *args, **kwargs)
     
     def list(self, request, *args, **kwargs):
-        print('chupame los huevos(list)')
-        print(request.data)
+   
         return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
-        print('ola(retrieve)')
+
         return super().retrieve(request, *args, **kwargs)
 
 class MealViewSet(ModelViewSet):
@@ -95,8 +93,7 @@ def addIngredientDiary(request):
 @csrf_exempt
 @api_view(['POST'])
 def createIngredientsMeal(request):
-    try:
-        print(request.data)
+    try:        
         ingredients_list = request.data['ingredients']
         client = Nutritionist.objects.get(id=request.data["created_by"])    
         meal = Meal.objects.create(name=request.data['name'], meal_time=request.data["meal_time"], created_by=client)
@@ -108,10 +105,3 @@ def createIngredientsMeal(request):
         serializer = MealSerializer(meal)    
         return Response({'message': 'Meal created successfully', "data":serializer.data}, status=status.HTTP_201_CREATED)
     except Exception as e: return Response({'message': 'One of the ingredients does not exist', 'error': e})
-
-
-
-
-    
-        
-

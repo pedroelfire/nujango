@@ -54,11 +54,9 @@ class LoginView(APIView):
             data = json.loads(request.body)
             username = str(data.get('username'))
             password = str(data.get('password'))
-            print(username, password)
+            
             user = authenticate(username=username, password=password)
-            print("Hola pendejin")
-            print(user)
-            print("Hola pendejin")
+
 
             if user is not None:
                 refresh = RefreshToken.for_user(user)

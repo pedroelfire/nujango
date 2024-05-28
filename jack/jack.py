@@ -39,8 +39,7 @@ def llamarFuncion(question, previous_messages, previous_foods):
     messages.append({"role": "user", "content": question}) 
     for responses in functions_responses:
         messages.append(responses)
-    chat_response = chat_completion_request(messages, tools=tools)
-    print(chat_response)
+    chat_response = chat_completion_request(messages, tools=tools)    
     try:
         assistant_message = chat_response.choices[0].message.tool_calls[0].function
     except:
@@ -70,13 +69,11 @@ def chat_completion_request(messages, tools=None, tool_choice=None, model=modelo
         )
         return response
     except Exception as e:
-        print("Unable to generate ChatCompletion response")
-        print(f"Exception: {e}")
         return e
 
 def imprimir_huevo():
-    for a in range(10):
-        print(a)
+    # for a in range(10):
+    #     print(a)
     return "Imprimi un huevito con jamon"
 
 def intercambiar_ingrediente(ingredient):
